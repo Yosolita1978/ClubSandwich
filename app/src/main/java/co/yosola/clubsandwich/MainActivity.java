@@ -3,6 +3,9 @@ package co.yosola.clubsandwich;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -17,7 +20,12 @@ import co.yosola.clubsandwich.utilities.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mSearchResultsTextView;
+    private static final String TAG = "MainActivity";
+
+    private RecyclerView mRecyclerView;
+
+    private SandwichAdapter mSandwichAdapter;
+
 
     private TextView mErrorMessageDisplay;
 
@@ -30,40 +38,51 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSearchResultsTextView = (TextView) findViewById(R.id.sandwiches_show);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycle_view);
 
-        // COMPLETED (13) Get a reference to the error TextView using findViewById
         mErrorMessageDisplay = (TextView) findViewById(R.id.error_message_display);
 
-        // COMPLETED (25) Get a reference to the ProgressBar using findViewById
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        mRecyclerView.setHasFixedSize(true);
+
+        mSandwichAdapter = new SandwichAdapter();
+
+        mRecyclerView.setAdapter(mSandwichAdapter);
+
         mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
 
         makeFoodSearchQuery();
     }
 
     private void makeFoodSearchQuery() {
+        showJsonDataView();
         URL foodSearchUrl = NetworkUtils.buildUrl();
-        mSearchResultsTextView.setText(foodSearchUrl.toString());
-        new FoodQueryTask().execute(foodSearchUrl);
+        new FoodQueryTask().execute();
     }
 
     private void showJsonDataView() {
         // First, make sure the error is invisible
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         // Then, make sure the JSON data is visible
-        mSearchResultsTextView.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showErrorMessage() {
         // First, hide the currently visible data
-        mSearchResultsTextView.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
         // Then, show the error
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
-    public class FoodQueryTask extends AsyncTask<URL, Void, String> {
 
-        // COMPLETED (26) Override onPreExecute to set the loading indicator to visible
+
+    public class FoodQueryTask extends AsyncTask<String, Void, String[]> {
+
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -71,31 +90,34 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(URL... params) {
-            URL searchUrl = params[0];
-            String githubSearchResults = null;
+        protected String[] doInBackground(String... params) {
+
+            URL foodRequestUrl = NetworkUtils.buildUrl();
+
             try {
-                githubSearchResults = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-                mSandwichList = JsonUtils.parseSandwichJson(githubSearchResults);
-            } catch (IOException e) {
+                String jsonResponse = NetworkUtils
+                        .getResponseFromHttpUrl(foodRequestUrl);
+
+                String[] simpleJsonData = JsonUtils
+                        .parseSandwichJson(MainActivity.this, jsonResponse);
+
+                return simpleJsonData;
+
+            } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
-            return mSandwichList.toString();
         }
 
         @Override
-        protected void onPostExecute(String githubSearchResults) {
-
+        protected void onPostExecute(String[] sandwichData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (githubSearchResults != null && !githubSearchResults.equals("")) {
-
+            if (sandwichData != null) {
                 showJsonDataView();
-                mSearchResultsTextView.setText(githubSearchResults);
+                mSandwichAdapter.setSandwichData(sandwichData);
             } else {
-
                 showErrorMessage();
             }
         }
     }
-
 }

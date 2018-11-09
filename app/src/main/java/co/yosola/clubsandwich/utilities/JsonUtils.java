@@ -1,5 +1,6 @@
 package co.yosola.clubsandwich.utilities;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -28,19 +29,20 @@ public class JsonUtils {
 
     //Parse the Json to create the new Sandwich object
 
-    public static List<Sandwich> parseSandwichJson(String json) {
+    public static String[] parseSandwichJson(Context context, String json) {
+
+        String[] parsedSandwichData = null;
 
         if (TextUtils.isEmpty(json)) {
             return null;
         }
 
-        // Create an empty ArrayList that we can start adding ranked articles to
-        List<Sandwich> sandwichesList = new ArrayList<>();
-
         try {
             JSONObject jsonData = new JSONObject(json);
 
             JSONArray jsonArray = jsonData.optJSONArray(RECIPES);
+
+            parsedSandwichData = new String[jsonArray.length()];
 
             for(int i = 0; i < jsonArray.length(); i++){
                 JSONObject recipe = jsonArray.optJSONObject(i);
@@ -49,7 +51,7 @@ public class JsonUtils {
                 String imageUrl = recipe.optString(IMAGE_URL);
                 String sourceUrl = recipe.optString(SOURCE_URL);
 
-                sandwichesList.add(new Sandwich(name, publisher, imageUrl, sourceUrl));
+                parsedSandwichData[i] = name + " - " + publisher + " - " + imageUrl + " - " + sourceUrl ;
             }
 
 
@@ -58,7 +60,7 @@ public class JsonUtils {
             e.printStackTrace();
         }
 
-        return  sandwichesList;
+        return parsedSandwichData;
     }
 
 }

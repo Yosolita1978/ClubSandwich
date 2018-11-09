@@ -5,10 +5,13 @@
     android:layout_height="match_parent"
     tools:context="co.yosola.clubsandwich.MainActivity">
 
-    <TextView
-        android:id="@+id/sandwiches_show"
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:id="@+id/recycle_view"
+        tools:listitem="@layout/list_item">
+
+    </android.support.v7.widget.RecyclerView>
 
     <TextView
         android:id="@+id/error_message_display"
