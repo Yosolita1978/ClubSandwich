@@ -9,9 +9,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import co.yosola.clubsandwich.Model.Sandwich;
@@ -26,12 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
     private SandwichAdapter mSandwichAdapter;
 
-
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
 
-    private List<Sandwich> mSandwichList;
+    private ArrayList<Sandwich> mSandwichList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,29 +40,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycle_view);
-
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
         mErrorMessageDisplay = (TextView) findViewById(R.id.error_message_display);
 
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-
-        mRecyclerView.setLayoutManager(layoutManager);
-
-        mRecyclerView.setHasFixedSize(true);
-
-        mSandwichAdapter = new SandwichAdapter();
-
-        mRecyclerView.setAdapter(mSandwichAdapter);
-
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
-
-        makeFoodSearchQuery();
-    }
-
-    private void makeFoodSearchQuery() {
-        showJsonDataView();
-        URL foodSearchUrl = NetworkUtils.buildUrl();
-        new FoodQueryTask().execute();
+        URL foodUrl = NetworkUtils.buildUrl();
+        new DownloadTask().execute();
     }
 
     private void showJsonDataView() {
@@ -78,10 +62,7 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
-
-
-    public class FoodQueryTask extends AsyncTask<String, Void, String[]> {
-
+    public class DownloadTask extends AsyncTask<String, Void, Integer>{
 
         @Override
         protected void onPreExecute() {
@@ -89,35 +70,42 @@ public class MainActivity extends AppCompatActivity {
             mLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
-        @Override
-        protected String[] doInBackground(String... params) {
 
+        @Override
+        protected Integer doInBackground(String... params) {
+            Integer result = 0;
             URL foodRequestUrl = NetworkUtils.buildUrl();
 
             try {
                 String jsonResponse = NetworkUtils
                         .getResponseFromHttpUrl(foodRequestUrl);
 
-                String[] simpleJsonData = JsonUtils
+                mSandwichList = JsonUtils
                         .parseSandwichJson(MainActivity.this, jsonResponse);
 
-                return simpleJsonData;
+                result = 1; // Successful
 
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+                result = 0; //"Failed to fetch data!";
             }
+
+            return  result;
         }
 
         @Override
-        protected void onPostExecute(String[] sandwichData) {
+        protected void onPostExecute(Integer result) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (sandwichData != null) {
+            if (result == 1) {
                 showJsonDataView();
-                mSandwichAdapter.setSandwichData(sandwichData);
+                mSandwichAdapter = new SandwichAdapter(MainActivity.this, mSandwichList);
+                mRecyclerView.setAdapter(mSandwichAdapter);
+
             } else {
                 showErrorMessage();
+                Toast.makeText(MainActivity.this, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 }

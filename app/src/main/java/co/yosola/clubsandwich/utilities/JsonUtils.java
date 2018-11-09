@@ -29,9 +29,9 @@ public class JsonUtils {
 
     //Parse the Json to create the new Sandwich object
 
-    public static String[] parseSandwichJson(Context context, String json) {
+    public static ArrayList<Sandwich> parseSandwichJson(Context context, String json) {
 
-        String[] parsedSandwichData = null;
+        ArrayList<Sandwich> mSandichList = new ArrayList<Sandwich>();
 
         if (TextUtils.isEmpty(json)) {
             return null;
@@ -42,16 +42,16 @@ public class JsonUtils {
 
             JSONArray jsonArray = jsonData.optJSONArray(RECIPES);
 
-            parsedSandwichData = new String[jsonArray.length()];
+            int jsonLength = jsonArray.length();
 
-            for(int i = 0; i < jsonArray.length(); i++){
+            for(int i = 0; i < jsonLength; i++){
                 JSONObject recipe = jsonArray.optJSONObject(i);
                 String name = recipe.optString(TITLE);
                 String publisher = recipe.optString(PUBLISHER);
                 String imageUrl = recipe.optString(IMAGE_URL);
                 String sourceUrl = recipe.optString(SOURCE_URL);
 
-                parsedSandwichData[i] = name + " - " + publisher + " - " + imageUrl + " - " + sourceUrl ;
+                mSandichList.add(new Sandwich(name, publisher, imageUrl, sourceUrl));
             }
 
 
@@ -60,7 +60,7 @@ public class JsonUtils {
             e.printStackTrace();
         }
 
-        return parsedSandwichData;
+        return mSandichList;
     }
 
 }
