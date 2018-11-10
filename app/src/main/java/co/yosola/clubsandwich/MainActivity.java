@@ -1,20 +1,18 @@
 package co.yosola.clubsandwich;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import co.yosola.clubsandwich.Model.Sandwich;
 import co.yosola.clubsandwich.utilities.JsonUtils;
@@ -34,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Sandwich> mSandwichList;
 
+    private Toast mToast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
         mErrorMessageDisplay = (TextView) findViewById(R.id.error_message_display);
 
-        URL foodUrl = NetworkUtils.buildUrl();
         new DownloadTask().execute();
     }
 
@@ -61,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         // Then, show the error
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
+
 
     public class DownloadTask extends AsyncTask<String, Void, Integer>{
 
@@ -100,6 +100,17 @@ public class MainActivity extends AppCompatActivity {
                 showJsonDataView();
                 mSandwichAdapter = new SandwichAdapter(MainActivity.this, mSandwichList);
                 mRecyclerView.setAdapter(mSandwichAdapter);
+                mSandwichAdapter.setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Sandwich sandwich) {
+                        Toast.makeText(MainActivity.this, sandwich.getName(), Toast.LENGTH_LONG).show();
+
+                        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                        intent.putExtra("sandwich_name", sandwich.getName());
+                        startActivity(intent);
+
+                    }
+                });
 
             } else {
                 showErrorMessage();

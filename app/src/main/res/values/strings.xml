@@ -11,6 +11,8 @@
     <!-- Content descriptions-->
     <string name="sandwich_picture_content_description">Sandwich picture</string>
     <string name="sandwich_name_content_description">Sandwich Name</string>
+    <string name="sandwich_publisher_content_description">Sandwich Publisher</string>
+    <string name="sandwich_recipe_content_description">Go to Recipe</string>
 
     <!-- Error messages-->
     <string name="detail_error_message">Sandwich data not available</string>
