@@ -1,7 +1,7 @@
 package co.yosola.clubsandwich.Model;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class Sandwich {
     private String name;

@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
                         intent.putExtra("sandwich_name", sandwich.getName());
+                        intent.putExtra("Sandwich_publisher", sandwich.getPublisher());
+                        intent.putExtra("Sandwich_url", sandwich.getRecipeUrl());
+                        intent.putExtra("Sandwich_img_url", sandwich.getimageUrl());
                         startActivity(intent);
 
                     }

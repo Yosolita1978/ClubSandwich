@@ -45,8 +45,7 @@ public class SandwichAdapter extends RecyclerView.Adapter<SandwichAdapter.Custom
 
         //Download image using picasso library
         if (!TextUtils.isEmpty(sandwichItem.getimageUrl())) {
-            Picasso.with(mContext).load(sandwichItem.getimageUrl())
-                    .error(R.drawable.sandwichdefault)
+            Picasso.get().load(sandwichItem.getimageUrl())
                     .placeholder(R.drawable.sandwichdefault)
                     .into(customViewHolder.imageView);
         }

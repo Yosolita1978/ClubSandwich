@@ -11,7 +11,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="210dp"
+            android:layout_height="250dp"
             android:background="@color/colorPrimaryDark" />
 
         <LinearLayout
@@ -29,8 +29,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/image_sandwich"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
                     android:layout_centerHorizontal="true"
                     android:elevation="1dp"
                     android:src="@drawable/sandwichdefault" />
@@ -43,7 +43,7 @@
                     <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="85dp"
+                        android:layout_marginTop="200dp"
                         app:cardCornerRadius="@dimen/dimen_10dp"
                         app:contentPaddingBottom="15dp"
                         app:contentPaddingLeft="15dp"
@@ -116,7 +116,7 @@
                 android:textColor="@color/textOnAccent"
                 android:textSize="@dimen/font_small"
                 android:textStyle="bold"
-                tools:text="@string/sandwich_recipe_content_description" />
+                android:text="@string/sandwich_recipe_content_description" />
 
         </LinearLayout>
 
