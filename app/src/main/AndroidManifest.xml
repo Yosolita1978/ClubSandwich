@@ -22,6 +22,15 @@
 
         <activity android:name=".DetailActivity"
             android:parentActivityName=".MainActivity"></activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings_title"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="co.yosola.clubsandwich.MainActivity"/>
+        </activity>
     </application>
 
 </manifest>

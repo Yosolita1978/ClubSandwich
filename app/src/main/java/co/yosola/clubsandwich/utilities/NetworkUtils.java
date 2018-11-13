@@ -23,11 +23,11 @@ public class NetworkUtils {
 
     final static String PARAM_COUNT = "count";
 
-    public static URL buildUrl() {
+    public static URL buildUrl(String count) {
         Uri builtUri = Uri.parse(GITHUB_BASE_URL).buildUpon()
                 .appendQueryParameter("key", apiKey)
                 .appendQueryParameter(PARAM_QUERY, "Sandwich")
-                .appendQueryParameter(PARAM_COUNT, "20")
+                .appendQueryParameter(PARAM_COUNT, count)
                 .build();
 
         URL url = null;
