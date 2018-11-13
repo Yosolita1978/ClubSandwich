@@ -27,7 +27,7 @@ public class NetworkUtils {
         Uri builtUri = Uri.parse(GITHUB_BASE_URL).buildUpon()
                 .appendQueryParameter("key", apiKey)
                 .appendQueryParameter(PARAM_QUERY, "Sandwich")
-                .appendQueryParameter(PARAM_COUNT, "10")
+                .appendQueryParameter(PARAM_COUNT, "20")
                 .build();
 
         URL url = null;
